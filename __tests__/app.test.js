@@ -2,7 +2,7 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const { AcessCookie } = require('cookiejar');
+const agent = request.agent(app);
 
 jest.mock('../lib/services/github');
 
@@ -17,11 +17,10 @@ describe('backend-express-template routes', () => {
   });
 
   it('should redirect users to posts', async () => {
-    const agent = request.agent(app);
     const res = await agent.get('/api/v1/github/callback?code=42').redirects(1);
     expect(res.redirects.length).toEqual(1);
 
-    const session = agent.jar.getCookie(process.env.COOKIE_NAME, AcessCookie.All);
+    const session = agent.jar.getCookie(process.env.COOKIE_NAME);
     expect(session).toMatchObject({
       name: process.env.COOKIE_NAME,
       value: expect.any(String)
@@ -29,18 +28,10 @@ describe('backend-express-template routes', () => {
   });
 
   it('should log a user out', async () => {
-    // "Log in"
-    const agent = request.agent(app);
-    await agent.get('/api/v1/github/callback?code=42');
+    await agent.get('/api/v1/github/callback?code=42').redirects(1);
+    const response = await agent.delete('/api/v1/github/sessions');
 
-    let session = agent.jar.getCookie(process.env.COOKIE_NAME, AcessCookie.All);
-    expect(session).toBeTruthy();
-
-    const res = await agent.delete('/api/v1/github');
-    expect(res.status).toEqual(204);
-
-    session = agent.jar.getCookie(process.env.COOKIE_NAME, AcessCookie.All);
-    expect(session).toBeUndefined();
+    expect(response.status).toBe(200);
   });
   afterAll(() => {
     pool.end();
