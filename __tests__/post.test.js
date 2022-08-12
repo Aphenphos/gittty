@@ -17,7 +17,7 @@ describe('backend-express-template routes', () => {
 
     const response = await agent.get('/api/v1/posts');
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(4);
+    expect(response.body.length).toBe(2);
     expect(response.body[0]).toEqual({
       id: expect.any(String),
       userID: expect.any(String),
@@ -37,7 +37,7 @@ describe('backend-express-template routes', () => {
     expect(response.status).toBe(200);
     expect(posts[posts.length - 1]).toEqual({
       id: expect.any(String),
-      userID: '4',
+      userID: '3',
       content: 'lets go',
     });
   });

@@ -14,4 +14,21 @@ create table posts (
     id bigint generated always as identity primary key,
     user_id bigint not null,
     content text
+);
+
+insert into github_users (
+    username, 
+    email, 
+    avatar
 )
+values
+('geg', 'geg@geg.com', 'geg.jpg'),
+('deg', 'deg@deg.com', 'deg.jpg');
+
+insert into posts (
+    user_id,
+    content
+)
+values
+('1', 'wow is this dope'),
+('2', 'woah');
