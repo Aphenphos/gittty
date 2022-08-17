@@ -13,7 +13,7 @@ create table github_users (
 create table posts (
     id bigint generated always as identity primary key,
     user_id bigint not null,
-    content text
+    content varchar(255)
 );
 
 insert into github_users (
